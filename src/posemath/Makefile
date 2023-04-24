@@ -28,19 +28,18 @@ endif
 LIBRCS_OBJS=
 include Makefile.lib
 
+# Makefile para compilar la biblioteca de matemáticas pose
 
-# Makefile for compiling pose math library
-
-# Note: posemath.cc and _posemath.c implement the C++ and C versions of
-# the posemath.h definitions, respectively.
-# sincos.h and sincos.c are C only.
-# mathprnt.cc and _mathprnt.c implement the C++ and C versions of the
-# mathprnt.h definitions, respectively.
+# Nota: posemath.cc y _posemath.c implementan las versiones C++ y C de
+# las definiciones de posemath.h, respectivamente.
+# sincos.h y sincos.c son solo C.
+# mathprnt.cc y _mathprnt.c implementan las versiones C++ y C del
+# definiciones de mathprnt.h, respectivamente.
 #
-# Debug can be compiled in to the posemath.cc and _posemath.c files.
+# La depuración se puede compilar en los archivos posemath.cc y _posemath.c.
 #
-# The resulting .o files are linked into libpm.a (no debug), or libpmdb.a
-# (with debug).
+# Los archivos .o resultantes se vinculan a libpm.a (sin depuración) o libpmdb.a
+# (con depuración).
 
 MODULE = posemath
 
