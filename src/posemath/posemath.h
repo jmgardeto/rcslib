@@ -28,60 +28,59 @@ versions bear some notice that they have been modified.
 /*
   posemath.h
 
-  Declarations for pose math library data types and manipulation functions.
+   Declaraciones para tipos de datos de biblioteca matemática pose y funciones de manipulación.
+   
+   Los tipos de datos comprenden varias representaciones de cantidades de traslación
+   y rotación y una 'pose' para representar la ubicación y la orientación
+   de un marco en el espacio relativo a un marco base. Las representaciones de translaciones
+   incluyen coordenadas cartesianas, esféricas y cilíndricas. Todos estos
+   contienen 3 elementos. Las representaciones de rotación incluyen vectores de rotación,
+   cuaterniones, matrices de rotación, ángulos de Euler y balanceo-cabeceo-guiñada. Estos
+   contienen al menos 3 elementos, pero pueden contener más. Solo son necesarios 3 elementos
+   para los 3 grados de libertad para traslación o rotación, pero algunas
+   representaciones de datos se usan más por eficiencia computacional o intuición
+   a costa del espacio de almacenamiento.
+   
+   Los tipos se abrevian en el nombre de la función con unas pocas letras. Existen
+   funciones para la conversión entre tipos de datos, comprobación de consistencia,
+   normalización en consistencia, extracción de características como el tamaño y
+   operaciones aritmeticas.
+   
+   Los nombres de las representaciones de datos están en mayúsculas, con el prefijo 'PM_'.
+   Los nombres de las funciones están en mayúsculas y minúsculas, con el prefijo 'pm', y se utilizan
+   cambios de mayúsculas a minúsculas para indicar nuevas cantidades en lugar de guiones bajos.
+   La sintaxis de las funciones se parece a:
+   
+     int pmQuatRotConvert(PM_QUATERNION, PM_ROTATION_VECTOR *);
+   
+   El valor devuelto es 0 para éxito, o un código de error distinto de cero, por ejemplo:
+   
+     #define PM_ERR -1
+     #define PM_IMPL_ERR -2
+     
+   La variable global 'pmErrno' se establece en este valor de retorno.
+   
+   Las clases de C++ se usan para los tipos de datos, de modo que la sobrecarga de operadores 
+   se puede usar para reducir el trabajo de programación. El uso de la versión de funciones del
+   operador sobrecargado pierde el código de error entero. La variable global 'pmErrno' se 
+   puede consultar después de estas operaciones.
+   Esto no es thread-safe ni reentrante.
+  
+   Los nombres de C++ correspondientes a las estructuras de C usan mezcla de casos en lugar
+   de todo mayúsculas. Por lo tanto, un quaternión en C++ es un PmQuaternion.
+   
+   El símbolo MATH_DEBUG se puede definir para incluir informes de errores a través de
+   errores impresos.
+   
+   Existen funciones nativas C eficientes para PM_CARTESIAN, PM_QUATERNION,
+   y tipos PM_POSE. Se han definido constructores en todas las clases
+   para convertir a/desde PM_CARTESIAN cualquier otro tipo de translación, y
+   para convertir a/desde PM_QUATERNION cualquier otro tipo de rotación. Esto significa
+   que si no existen funciones C explícitas para otro tipo, las conversiones
+   al tipo nativo correspondiente ocurrirá automáticamente. Si se desea mas
+   eficiencia para un tipo particular, deben codificarse funciones C para manejar
+   las operaciones y deberían ser añadidas las funciones u operadores sobrecargados de C++.
 
-  Data types comprise various representations of translation and rotation
-  quantities, and a 'pose' for representing the location and orientation
-  of a frame in space relative to a base frame. Translation representations
-  include cartesian, spherical, and cylindrical coordinates. All of these
-  contain 3 elements. Rotation representations include rotation vectors,
-  quaternions, rotation matrices, Euler angles, and roll-pitch-yaw. These
-  contain at least 3 elements, and may contain more. Only 3 are necessary
-  for the 3 degrees of freedom for either translation or rotation, but some
-  data representations use more for computational efficiency or intuition
-  at the expense of storage space.
-
-  Types are abbreviated in function naming with a few letters. Functions
-  exist for conversion between data types, checking for consistency,
-  normalization into consistency, extracting features such as size, and
-  arithmetic operations.
-
-  Names of data representations are in all capitals, prefixed with 'PM_'.
-  Names of functions are in mixed case, prefixed with 'pm', with case changes
-  used to indicate new quantities instead of underscores. Function syntax
-  looks like
-
-    int pmQuatRotConvert(PM_QUATERNION, PM_ROTATION_VECTOR *);
-
-  The return value is an error code, 0 for success, or a non-zero error
-  code for failure, for example:
-
-    #define PM_ERR -1
-    #define PM_IMPL_ERR -2
-
-  The global variable 'pmErrno' is set to this return value.
-
-  C++ classes are used for data types so that operator overloading can
-  be used to reduce the programming labor. Using the overloaded operator
-  version of functions loses the integer error code. The global
-  variable 'pmErrno' can be queried after these operations. This is not
-  thread-safe or reentrant.
-
-  C++ names corresponding to the C structures use case mixing instead
-  of all caps. Thus, a quaternion in C++ is a PmQuaternion.
-
-  The MATH_DEBUG symbol can be defined to include error reporting via
-  printed errors.
-
-  Native efficient C functions exist for the PM_CARTESIAN, PM_QUATERNION,
-  and PM_POSE types. Constructors in all the classes have been defined
-  to convert to/from PM_CARTESIAN and any other translation type, and
-  to convert to/from PM_QUATERNION and any other rotation type. This means
-  that if no explicit C functions exist for another type, conversions
-  to the corresponding native type will occur automatically. If more
-  efficiency is desired for a particular type, C functions to handle the
-  operations should be coded and the overloaded C++ functions or operators
-  should be added.
 */
 
 #ifdef __cplusplus
@@ -111,22 +110,23 @@ versions bear some notice that they have been modified.
 /* #define INCLUDE_POSEMATH_COPY_CONSTRUCTORS */
 #undef INCLUDE_POSEMATH_COPY_CONSTRUCTORS
 
-/* forward declarations-- conversion ctors will need these */
+/* declaraciones de reenvío: los ctors de conversión los necesitarán*/
+/* public access by default (struct) */
 
-/* translation types */
+/* tipos de translación */
 struct PM_CARTESIAN;       /* Cart */
 struct PM_SPHERICAL;       /* Sph */
 struct PM_CYLINDRICAL;     /* Cyl */
 
-/* rotation types */
+/* tipos de rotación */
 struct PM_ROTATION_VECTOR; /* Rot */
 struct PM_ROTATION_MATRIX; /* Mat */
-struct PM_QUATERNION;     /* Quat  */
-struct PM_EULER_ZYZ;      /* Zyz */
-struct PM_EULER_ZYX;      /* Zyx */
-struct PM_RPY;            /* Rpy */
+struct PM_QUATERNION;      /* Quat  */
+struct PM_EULER_ZYZ;       /* Zyz */
+struct PM_EULER_ZYX;       /* Zyx */
+struct PM_RPY;             /* Rpy */
 
-/* pose types */
+/* tipos pose */
 struct PM_XYA;            /* 2D Pose (x,y and a for yaw angle) */
 struct PM_POSE;           /* Pose */
 struct PM_HOMOGENEOUS;    /* Hom */
@@ -135,7 +135,10 @@ struct PM_HOMOGENEOUS;    /* Hom */
 
 struct PM_CARTESIAN
 {
-  /* ctors/dtors */
+  /* ctors/dtors
+  https://gcc.gnu.org/onlinedocs/gccint/Initialization.html
+  Member initialization in constructors with :
+  */
   PM_CARTESIAN():x(0),y(0),z(0) {};
   PM_CARTESIAN(double _x, double _y, double _z): x(_x),y(_y),z(_z) {};
 #ifdef INCLUDE_POSEMATH_COPY_CONSTRUCTORS
@@ -143,11 +146,11 @@ struct PM_CARTESIAN
 #endif
 
   PM_CARTESIAN(PM_CONST PM_CYLINDRICAL PM_REF c); /* conversion */
-  PM_CARTESIAN(PM_CONST PM_SPHERICAL PM_REF s); /* conversion */
+  PM_CARTESIAN(PM_CONST PM_SPHERICAL PM_REF s);   /* conversion */
 
-  /* operators */
-  double & operator [] (int n);             /* this[n] */
-  PM_CARTESIAN &operator = (PM_CONST PM_CARTESIAN &v) {x=v.x; y=v.y; z=v.z; return(*this);}; /* this = v */
+  /* operadores */
+  double & operator [] (int n);                                                                  /* this[n] */
+  PM_CARTESIAN &operator = (PM_CONST PM_CARTESIAN &v) {x=v.x; y=v.y; z=v.z; return(*this);};     /* this = v */
   PM_CARTESIAN &operator += (PM_CONST PM_CARTESIAN &v) {x+=v.x; y+=v.y; z+=v.z; return(*this);}; /* this += v */
   PM_CARTESIAN &operator -= (PM_CONST PM_CARTESIAN &v) {x-=v.x; y-=v.y; z-=v.z; return(*this);}; /* this -= v */
 
