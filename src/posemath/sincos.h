@@ -28,12 +28,12 @@ versions bear some notice that they have been modified.
 /*
   sincos.h
 
-  support for native sincos functions
+  soporte para funcione sincos nativas
 */
 
 /*
-  for each platform that has built-in support for the sincos function,
-  define SINCOS_SUPPORT here
+para cada plataforma que tiene soporte incorporado para 
+la función sincos, defina SINCOS_SUPPORT aquí
 */
 
 #ifdef sunos4
@@ -55,8 +55,8 @@ versions bear some notice that they have been modified.
 #endif
 
 /*
-  all other platforms will not have SINCOS_SUPPORT defined, and will
-  get the declaration for the explicit function
+  todas las demás plataformas no tendrán definido SINCOS_SUPPORT 
+  y obtendrán la declaración para la función explícita
 */
 
 #ifndef SINCOS_SUPPORT
